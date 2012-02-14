@@ -55,6 +55,15 @@ class ProductTest < ActiveSupport::TestCase
                           :price        => 1,
                           :image_url    => "fred.gif")
     assert !product.save
-    assert_equal "has already been taken", product.errors[:title].join('; ')
+    assert_equal "already exists in database. Please choose another.", product.errors[:title].join('; ')
+  end
+  
+  test "product title must be at least 10 characters long" do
+    product = new_product("fred.gif")
+    product.title = "Short"
+    assert product.invalid?
+    assert_equal "must be at least 10 characters long", product.errors[:title].join("; ")
+    product.title = "Long Enough"
+    assert product.valid?
   end
 end
